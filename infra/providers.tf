@@ -7,8 +7,7 @@ terraform {
 }
 
 provider "aws" {
-  region  = "ap-southeast-2"
-  profile = "secureship"
+  region = "ap-southeast-2"
 
   default_tags {
     tags = { Project = "secureship", ManagedBy = "terraform" }
