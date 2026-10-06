@@ -1,5 +1,6 @@
 # secureship
 
+![Terraform](https://github.com/jyue0013-creator/secureship/actions/workflows/terraform.yml/badge.svg)
 A DevSecOps pipeline for deploying a serverless app on AWS, built with Terraform.
 
 ## Architecture
@@ -10,8 +11,13 @@ API Gateway → Lambda (Python) → DynamoDB
 
 - Day 2: Remote Terraform state in S3 (versioned, encrypted, public access blocked, native locking)
 
-TO DO Day3
-- Create an IAM OIDC role so GitHub Actions can access AWS (no stored keys)
-- Add a GitHub Actions workflow that runs `terraform fmt`, `validate` and `plan` on every push
-- Auto-run `terraform apply` on merges to `main`
-- Add a pipeline status badge to the README
+- Day3: CI/CD with GitHub Actions — OIDC login (no stored AWS keys), automated fmt/validate/plan, auto-deploy on push to main
+
+- TODO Day4:
+**Next up**
+- Add security scanning to the pipeline (Checkov for Terraform, Trivy for code)
+- Fail the build on high-severity issues
+
+**Later**
+- [ ] Reorganise Terraform into reusable modules
+- [ ] Add network design: VPC, private subnets, DynamoDB VPC endpoint, flow logs 
