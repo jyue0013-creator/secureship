@@ -19,7 +19,7 @@ resource "aws_iam_role" "github_actions" {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
         }
         StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:jyue0013-creator/secureship:*"
+          "token.actions.githubusercontent.com:sub" = "repo:jyue0013-creator@202032703/secureship@1395258865:*"
         }
       }
     }]
