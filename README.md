@@ -23,7 +23,7 @@ API Gateway → Lambda (Python) → DynamoDB
  ## Security gate in action
 To prove the gate works, a pull request was opened that deliberately exposed SSH (port 22) to the whole internet. Checkov caught it, the security scan failed, and Terraform never ran, so the change was blocked from deploying.
 
-![Pull request blocked by security scan](docs/security-gate-pr.png)
+![Pull request blocked by security scan](docs/security-gate-pull-request.png)
 
 ![Checkov flagging the open SSH rule](docs/security-gate-error.png)
 
