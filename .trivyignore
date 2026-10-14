@@ -1,0 +1,2 @@
+# State bucket uses AES256 (SSE-S3) instead of a customer managed KMS key: acceptable for a single-user project
+AWS-0132

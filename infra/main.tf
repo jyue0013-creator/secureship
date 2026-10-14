@@ -8,6 +8,15 @@ resource "aws_dynamodb_table" "visits" {
     name = "id"
     type = "S"
   }
+
+  point_in_time_recovery {
+    enabled = true
+  }
+
+  server_side_encryption {
+    enabled = true
+  }
+
 }
 
 # 2. Permissions: the role Lambda runs as
@@ -60,6 +69,11 @@ resource "aws_lambda_function" "api" {
   environment {
     variables = { TABLE_NAME = aws_dynamodb_table.visits.name }
   }
+
+  tracing_config {
+    mode = "Active"
+  }
+
 }
 
 # 4. Public URL
@@ -85,6 +99,25 @@ resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.http.id
   name        = "$default"
   auto_deploy = true
+
+  # Record who called the API and what happened
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api.arn
+    format = jsonencode({
+      requestId   = "$context.requestId"
+      ip          = "$context.identity.sourceIp"
+      requestTime = "$context.requestTime"
+      httpMethod  = "$context.httpMethod"
+      routeKey    = "$context.routeKey"
+      status      = "$context.status"
+    })
+  }
+
+  # Limit request rates to block abuse and runaway costs
+  default_route_settings {
+    throttling_burst_limit = 10
+    throttling_rate_limit  = 5
+  }
 }
 
 # Let API Gateway call the Lambda
@@ -94,4 +127,26 @@ resource "aws_lambda_permission" "apigw" {
   function_name = aws_lambda_function.api.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.http.execution_arn}/*/*"
+}
+
+# Lets Lambda send trace data to X-Ray
+resource "aws_iam_role_policy_attachment" "xray" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+}
+
+# Lambda already created this log group automatically, so bring it under Terraform
+import {
+  to = aws_cloudwatch_log_group.lambda
+  id = "/aws/lambda/secureship-api"
+}
+
+resource "aws_cloudwatch_log_group" "lambda" {
+  name              = "/aws/lambda/secureship-api"
+  retention_in_days = 365
+}
+
+resource "aws_cloudwatch_log_group" "api" {
+  name              = "/aws/apigateway/secureship-api"
+  retention_in_days = 365
 }

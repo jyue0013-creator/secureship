@@ -1,6 +1,6 @@
 # secureship
 
-![Terraform](https://github.com/jyue0013-creator/secureship/actions/workflows/terraform.yml/badge.svg)
+[![Terraform](https://github.com/jyue0013-creator/secureship/actions/workflows/terraform.yml/badge.svg)](https://github.com/jyue0013-creator/secureship/actions/workflows/terraform.yml)
 A DevSecOps pipeline for deploying a serverless app on AWS, built with Terraform.
 
 ## Architecture

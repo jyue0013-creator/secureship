@@ -1,0 +1,14 @@
+skip-check:
+  - CKV_AWS_117   # Lambda not in a VPC: planned for the network design phase
+  - CKV_AWS_116   # No dead-letter queue: API is synchronous, so failures return straight to the caller
+  - CKV_AWS_115   # No reserved concurrency: new account limit is too low; API throttling used instead
+  - CKV_AWS_173   # Env vars use AWS-managed encryption: they hold no secrets (only the table name)
+  - CKV_AWS_272   # No code signing: single-developer project, code deployed only via the pipeline
+  - CKV_AWS_119   # DynamoDB uses AWS-managed key, not a customer key: acceptable for non-sensitive data
+  - CKV_AWS_158   # Log groups use default encryption: no sensitive data in logs
+  - CKV_AWS_309   # API route has no authorisation: public demo API by design
+  - CKV_AWS_18    # No access logging on state bucket: single-user project
+  - CKV_AWS_144   # No cross-region replication on state bucket: versioning covers recovery
+  - CKV_AWS_145   # State bucket uses AES256, not a customer KMS key: acceptable for this project
+  - CKV2_AWS_61   # No lifecycle rules on state bucket: very small storage footprint
+  - CKV2_AWS_62   # No event notifications on state bucket: not needed

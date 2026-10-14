@@ -32,15 +32,22 @@ resource "aws_iam_role_policy_attachment" "poweruser" {
   policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
 }
 
-# ...except managing the project's own roles (named secureship-*)
+# Only the exact IAM actions Terraform needs, only on the project's roles
 resource "aws_iam_role_policy" "project_iam" {
   name = "manage-secureship-roles"
   role = aws_iam_role.github_actions.id
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Effect   = "Allow"
-      Action   = ["iam:*"]
+      Effect = "Allow"
+      Action = [
+        "iam:CreateRole", "iam:DeleteRole", "iam:GetRole", "iam:UpdateRole",
+        "iam:UpdateAssumeRolePolicy", "iam:PassRole",
+        "iam:TagRole", "iam:UntagRole", "iam:ListRoleTags",
+        "iam:PutRolePolicy", "iam:GetRolePolicy", "iam:DeleteRolePolicy",
+        "iam:ListRolePolicies", "iam:AttachRolePolicy", "iam:DetachRolePolicy",
+        "iam:ListAttachedRolePolicies", "iam:ListInstanceProfilesForRole"
+      ]
       Resource = "arn:aws:iam::402545554662:role/secureship-*"
     }]
   })

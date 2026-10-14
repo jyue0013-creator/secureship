@@ -11,7 +11,26 @@ permissions:
   contents: read
 
 jobs:
+  # JOB 1: Security scan, which runs first
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Checkov (Terraform misconfigurations)
+        run: |
+          pip install checkov
+          checkov -d . --framework terraform --compact --config-file .checkov.yaml
+
+      - name: Trivy (misconfigurations, secrets, vulnerabilities)
+        run: |
+          docker run --rm -v "$PWD:/src" -w /src aquasec/trivy:latest \
+            fs . --scanners misconfig,secret,vuln --severity HIGH,CRITICAL --exit-code 1
+
+  # JOB 2: Terraform, which only runs if the security scan passes
   terraform:
+    needs: security-scan
     runs-on: ubuntu-latest
     defaults:
       run:
